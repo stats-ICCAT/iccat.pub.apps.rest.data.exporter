@@ -4,16 +4,6 @@ library(future)
 library(iccat.dev.data)
 library(iccat.pub.data)
 
-library(logger)
-
-log_dir = "./logs"
-
-if (!fs::dir_exists(log_dir)) fs::dir_create(log_dir)
-
-log_appender(appender_tee(tempfile("plumber_", log_dir, ".log")))
-
-LOG = logger::log_info
-
 load("./data/FC.RData")
 load("./data/FC_f.RData")
 

@@ -6,10 +6,7 @@ options(future.globals.maxSize = 16 * 1024 * 1024 * 1024) # 16 GB
 #* @parser json
 #* @post /ST01
 function(req, res) {
-  #LOG("ST01 - ENTER")
-  #promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "logger"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f", "LOG"), {
-    LOG("ST01 - ENTER (promise)")
-    
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "logger"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f"), {
     body = req$body
 
     meta    = body$meta
@@ -32,15 +29,11 @@ function(req, res) {
     res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
     on.exit(unlink(filepath))
-  
-    LOG("ST01 - EXIT (promise)")
       
     return(
       readBin(filepath, "raw", n = file.info(filepath)$size)
     )
-  #})
-  
-  #LOG("ST01 - EXIT")
+  })
 }
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
