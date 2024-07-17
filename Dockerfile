@@ -18,7 +18,7 @@ RUN apt-get -y install -y -qq \
 	    r-cran-openxlsx \
 	    r-cran-future 
 
-RUN R -e "install.packages(c('openxlsx2', 'odbc', 'logger'), repos = 'http://cran.r-project.org')"			
+RUN R -e "install.packages(c('openxlsx2', 'odbc'), repos = 'http://cran.r-project.org')"			
 
 # Environment variables
 WORKDIR /home/exporter
