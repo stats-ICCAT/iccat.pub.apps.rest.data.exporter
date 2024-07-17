@@ -15,7 +15,7 @@ RUN apt-get -y install -y -qq \
 			r-cran-dplyr \
 			r-cran-data.table \
 			r-cran-rodbc \
-	    r-cran-openxlsx \
+	    	r-cran-openxlsx \
 			r-cran-future 
 			
 

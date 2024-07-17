@@ -3,17 +3,18 @@ future::plan("multisession")
 options(future.globals.maxSize = 16 * 1024 * 1024 * 1024) # 16 GB
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+#* @parser json
 #* @post /ST01
-#* @param meta
-#* @param filters
-function(req, res, meta, filters) {
+function(req, res) {
   promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f"), {
-    meta    = jsonlite::fromJSON(meta)
-    filters = jsonlite::fromJSON(filters)
+    body = req$body
+
+    meta    = body$meta
+    filters = body$filters
     
     filename = paste0("ST01-T1FC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
-    
+
     iccat.dev.data::ST01.export(FC, FC_f, FCG, FCG_f,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported = meta$version_reported,
@@ -24,25 +25,26 @@ function(req, res, meta, filters) {
                                 year_to          = filters$year_to,
                                 
                                 destination_file = filepath)
-    
+
     res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
+      readBin(filepath, "raw")
     )
   })
 }
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+#* @parser json
 #* @post /ST02
-#* @param meta
-#* @param filters
-function(req, res, meta, filters) {
+function(req, res) {
   promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "NC"), {
-    meta    = jsonlite::fromJSON(meta)
-    filters = jsonlite::fromJSON(filters)
+    body = req$body
+    
+    meta    = body$meta
+    filters = body$filters
     
     filename = paste0("ST02-T1BC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -58,24 +60,24 @@ function(req, res, meta, filters) {
                                 
                                 destination_file = filepath)
     
-    res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
+      readBin(filepath, "raw")
     )
   })
 }
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST03
-#* @param meta
-#* @param filters
-function(req, res, meta, filters) {
+function(req, res) {
   promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "EF", "CA"), {
-    meta    = jsonlite::fromJSON(meta)
-    filters = jsonlite::fromJSON(filters)
+    body = req$body
+    
+    meta    = body$meta
+    filters = body$filters
     
     filename = paste0("ST03-T2CE_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_", filters$data_source, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -98,19 +100,19 @@ function(req, res, meta, filters) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
+      readBin(filepath, "raw")
     )
   })
 }
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST04
-#* @param meta
-#* @param filters
-function(req, res, meta, filters) {
+function(req, res) {
   promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "SZ"), {
-    meta    = jsonlite::fromJSON(meta)
-    filters = jsonlite::fromJSON(filters)
+    body = req$body
+    
+    meta    = body$meta
+    filters = body$filters
     
     filename = paste0("ST04-T2SZ_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_", #input$sz_product_type, "_",
@@ -144,19 +146,19 @@ function(req, res, meta, filters) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
+      readBin(filepath, "raw")
     )
   })
 }
 
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST05
-#* @param meta
-#* @param filters
-function(req, res, meta, filters) {
+function(req, res) {
   promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "CS"), {
-    meta    = jsonlite::fromJSON(meta)
-    filters = jsonlite::fromJSON(filters)
+    body = req$body
+    
+    meta    = body$meta
+    filters = body$filters
     
     filename = paste0("ST05-T2CS_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_",  filters$frequency_type, "_", filters$class_limit, "_",
@@ -185,7 +187,7 @@ function(req, res, meta, filters) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
+      readBin(filepath, "raw")
     )
   })
 }
