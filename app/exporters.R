@@ -31,7 +31,7 @@ function(req, res) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw")
+      readBin(filepath, "raw", n = file.info(filepath)$size)
     )
   })
 }
@@ -65,7 +65,7 @@ function(req, res) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw")
+      readBin(filepath, "raw", n = file.info(filepath)$size)
     )
   })
 }
@@ -100,7 +100,7 @@ function(req, res) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw")
+      readBin(filepath, "raw", n = file.info(filepath)$size)
     )
   })
 }
@@ -146,7 +146,7 @@ function(req, res) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw")
+      readBin(filepath, "raw", n = file.info(filepath)$size)
     )
   })
 }
@@ -187,7 +187,7 @@ function(req, res) {
     on.exit(unlink(filepath))
     
     return(
-      readBin(filepath, "raw")
+      readBin(filepath, "raw", n = file.info(filepath)$size)
     )
   })
 }
