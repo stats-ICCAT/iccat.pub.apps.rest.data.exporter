@@ -17,7 +17,8 @@ RUN apt-get -y install -y -qq \
 			r-cran-rodbc \
 	    	r-cran-openxlsx \
 			r-cran-future 
-			
+
+RUN R -e "install.packages(c('openxlsx2', 'odbc'), repos = 'http://cran.r-project.org')"			
 
 # Environment variables
 WORKDIR /home/exporter
@@ -34,7 +35,6 @@ ARG GITLAB_AUTH_TOKEN
 ENV GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN
 
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
-RUN R -e "install.packages(c('openxlsx2', 'odbc'), repos = 'http://cran.r-project.org')"
 
 RUN Rscript ./update_libs.R
 
