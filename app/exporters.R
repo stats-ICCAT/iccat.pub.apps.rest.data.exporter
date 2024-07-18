@@ -6,7 +6,7 @@ options(future.globals.maxSize = 16 * 1024 * 1024 * 1024) # 16 GB
 #* @parser json
 #* @post /ST01
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "logger"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f"), {
     body = req$body
 
     meta    = body$meta
