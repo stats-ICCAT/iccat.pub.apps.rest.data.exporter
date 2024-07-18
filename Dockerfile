@@ -34,8 +34,7 @@ ARG GITLAB_AUTH_TOKEN
 #ENV _R_SHLIB_STRIP_=true
 ENV GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN
 
-ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache # Ensures libs are always built (next command)
-
+ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 RUN Rscript ./update_libs.R
 
 EXPOSE 3838
