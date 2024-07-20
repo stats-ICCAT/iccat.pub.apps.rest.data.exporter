@@ -22,6 +22,11 @@ check_common_missing_filters = function(filters) {
   if(!"reporting_flag" %in% names(filters) | is.null(filters$reporting_flag)) missing_parameter("The 'Reporting flag' filter is mandatory")
   if(!"year_from"      %in% names(filters) | is.null(filters$year_from))      missing_parameter("The 'Year (from)' filter is mandatory")
   if(!"year_to"        %in% names(filters) | is.null(filters$year_to))        missing_parameter("The 'Year (to)' filter is mandatory")
+  
+  year_from = filters$year_from
+  year_to   = filters$year_to
+  
+  if(year_to - year_from >= 5) api_error("Only a maximum of 5 years of data can be downloaded")
 }
 
 error_handler = function(req, res, err) {
