@@ -17,7 +17,7 @@ missing_parameter = function(message) {
 
 check_common_missing_filters = function(filters) {
   #print(filters)
-  print(filters$reporting_flag)
+  #print(filters$reporting_flag)
   
   if(!"reporting_flag" %in% names(filters) | is.null(filters$reporting_flag)) missing_parameter("The 'Reporting flag' filter is mandatory")
   if(!"year_from"      %in% names(filters) | is.null(filters$year_from))      missing_parameter("The 'Year (from)' filter is mandatory")
@@ -86,7 +86,7 @@ function(req, res) {
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
     
-    plumber::as_attachment(filepath, filename) 
+    plumber::as_attachment(readBin(filepath, "raw", n = file.info(filepath)$size), filename) 
     
     # Before:
     
@@ -141,7 +141,7 @@ function(req, res) {
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
     
-    plumber::as_attachment(filepath, filename) 
+    plumber::as_attachment(readBin(filepath, "raw", n = file.info(filepath)$size), filename)  
     
     # Before:
     
@@ -201,7 +201,7 @@ function(req, res) {
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
     
-    plumber::as_attachment(filepath, filename) 
+    plumber::as_attachment(readBin(filepath, "raw", n = file.info(filepath)$size), filename)  
     
     # Before:
     
@@ -286,7 +286,7 @@ function(req, res) {
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
     
-    plumber::as_attachment(filepath, filename) 
+    plumber::as_attachment(readBin(filepath, "raw", n = file.info(filepath)$size), filename)  
     
     # Before:
     
@@ -362,7 +362,7 @@ function(req, res) {
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
     
-    plumber::as_attachment(filepath, filename) 
+    plumber::as_attachment(readBin(filepath, "raw", n = file.info(filepath)$size), filename) 
     
     # Before:
     
