@@ -268,13 +268,13 @@ function(req, res) {
     
     iccat.dev.data::ST04.export(SZ,
                                 statistical_correspondent = meta$statistical_correspondent,
-                                version_reported = meta$version_reported,
-                                content_type     = meta$content_type,
+                                version_reported  = meta$version_reported,
+                                content_type      = meta$content_type,
                                 
-                                reporting_flag   = filters$reporting_flag,
-                                year_from        = filters$year_from,
-                                year_to          = filters$year_to,
-                                
+                                reporting_flag    = filters$reporting_flag,
+                                year_from         = filters$year_from,
+                                year_to           = filters$year_to,
+                                product_type      = filters$product_type, #unused
                                 species           = filters$species, 
                                 sampling_location = filters$sampling_location,
                                 sampling_unit     = filters$sampling_unit,
