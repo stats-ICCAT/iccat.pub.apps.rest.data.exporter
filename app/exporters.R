@@ -22,11 +22,6 @@ check_common_missing_filters = function(filters) {
   if(!"reporting_flag" %in% names(filters) | is.null(filters$reporting_flag)) missing_parameter("The 'Reporting flag' filter is mandatory")
   if(!"year_from"      %in% names(filters) | is.null(filters$year_from))      missing_parameter("The 'Year (from)' filter is mandatory")
   if(!"year_to"        %in% names(filters) | is.null(filters$year_to))        missing_parameter("The 'Year (to)' filter is mandatory")
-  
-  year_from = filters$year_from
-  year_to   = filters$year_to
-  
-  if(year_to - year_from >= 5) api_error("Only a maximum of 5 years of data can be downloaded")
 }
 
 error_handler = function(req, res, err) {
@@ -175,7 +170,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST03
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "EF", "CA", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "EF", "CA", "check_common_missing_filters", "missing_parameter"), {
     body = req$body
     
     meta    = body$meta
@@ -184,6 +179,11 @@ function(req, res) {
     check_common_missing_filters(filters)
     
     if(!"data_source" %in% names(filters) | is.null(filters$data_source)) missing_parameter("The 'Data source' filter is mandatory")
+    
+    year_from = filters$year_from
+    year_to   = filters$year_to
+    
+    if(year_to != year_from) missing_parameter("Only a maximum of 1 year of catch-and-effort data can be exported at a time")
     
     filename = paste0("ST03-T2CE_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_", filters$data_source, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -200,8 +200,7 @@ function(req, res) {
                                 data_source      = filters$data_source,
                                 
                                 destination_file = filepath)
-    
-    
+
     # If we use "as_attachment" then the correct filename is returned to the caller,
     # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
     # This means that each and every download will create a stale temporary file...
@@ -243,7 +242,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST04
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "SZ", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "SZ", "check_common_missing_filters", "missing_parameter"), {
     body = req$body
     
     meta    = body$meta
@@ -327,7 +326,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST05
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "CS", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "CS", "check_common_missing_filters", "missing_parameter"), {
     body = req$body
     
     meta    = body$meta
