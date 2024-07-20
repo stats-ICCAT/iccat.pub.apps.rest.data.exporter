@@ -60,7 +60,7 @@ function(pr) {
 #* @parser json
 #* @post /ST01
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f", "check_common_missing_filters"), {
     body = req$body
 
     meta    = body$meta
@@ -82,13 +82,21 @@ function(req, res) {
                                 
                                 destination_file = filepath)
 
-    res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    # If we use "as_attachment" then the correct filename is returned to the caller,
+    # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
+    # This means that each and every download will create a stale temporary file...
     
-    on.exit(unlink(filepath))
+    plumber::as_attachment(filepath, filename) 
+    
+    # Before:
+    
+    #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    
+    #on.exit(unlink(filepath))
       
-    return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
-    )
+    #return(
+    #  readBin(filepath, "raw", n = file.info(filepath)$size)
+    #)
   })
 }
 
@@ -106,7 +114,7 @@ function(req, res, reporting_flag) {
 #* @parser json
 #* @post /ST02
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "meta", "filters", "NC", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "NC", "check_common_missing_filters"), {
     body = req$body
     
     meta    = body$meta
@@ -128,13 +136,22 @@ function(req, res) {
                                 
                                 destination_file = filepath)
     
+    
+    # If we use "as_attachment" then the correct filename is returned to the caller,
+    # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
+    # This means that each and every download will create a stale temporary file...
+    
+    plumber::as_attachment(filepath, filename) 
+    
+    # Before:
+    
     #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
-    on.exit(unlink(filepath))
+    #on.exit(unlink(filepath))
     
-    return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
-    )
+    #return(
+    #  readBin(filepath, "raw", n = file.info(filepath)$size)
+    #)
   })
 }
 
@@ -153,7 +170,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST03
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "meta", "filters", "EF", "CA", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "EF", "CA", "check_common_missing_filters"), {
     body = req$body
     
     meta    = body$meta
@@ -179,13 +196,22 @@ function(req, res) {
                                 
                                 destination_file = filepath)
     
-    res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
-    on.exit(unlink(filepath))
+    # If we use "as_attachment" then the correct filename is returned to the caller,
+    # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
+    # This means that each and every download will create a stale temporary file...
     
-    return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
-    )
+    plumber::as_attachment(filepath, filename) 
+    
+    # Before:
+    
+    #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    
+    #on.exit(unlink(filepath))
+    
+    #return(
+    #  readBin(filepath, "raw", n = file.info(filepath)$size)
+    #)
   })
 }
 
@@ -212,7 +238,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST04
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "meta", "filters", "SZ", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "SZ", "check_common_missing_filters"), {
     body = req$body
     
     meta    = body$meta
@@ -255,13 +281,22 @@ function(req, res) {
                                 
                                 destination_file = filepath)
     
-    res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
-    on.exit(unlink(filepath))
+    # If we use "as_attachment" then the correct filename is returned to the caller,
+    # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
+    # This means that each and every download will create a stale temporary file...
     
-    return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
-    )
+    plumber::as_attachment(filepath, filename) 
+    
+    # Before:
+    
+    #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    
+    #on.exit(unlink(filepath))
+    
+    #return(
+    #  readBin(filepath, "raw", n = file.info(filepath)$size)
+    #)
   })
 }
 
@@ -287,7 +322,7 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST05
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "meta", "filters", "CS", "check_common_missing_filters"), {
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "CS", "check_common_missing_filters"), {
     body = req$body
     
     meta    = body$meta
@@ -322,13 +357,22 @@ function(req, res) {
                                 
                                 destination_file = filepath)
     
-    res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
     
-    on.exit(unlink(filepath))
+    # If we use "as_attachment" then the correct filename is returned to the caller,
+    # but if we then attempt to remove the file with "on.exit(unlink(filepath))" the call never completes
+    # This means that each and every download will create a stale temporary file...
     
-    return(
-      readBin(filepath, "raw", n = file.info(filepath)$size)
-    )
+    plumber::as_attachment(filepath, filename) 
+    
+    # Before:
+    
+    #res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+    
+    #on.exit(unlink(filepath))
+    
+    #return(
+    #  readBin(filepath, "raw", n = file.info(filepath)$size)
+    #)
   })
 }
 
