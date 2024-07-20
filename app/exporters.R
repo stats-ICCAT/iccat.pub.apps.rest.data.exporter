@@ -60,18 +60,29 @@ function(pr) {
 #* @parser json
 #* @post /ST01
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "FC", "FC_f", "FCG", "FCG_f", "check_common_missing_filters"), {
-    body = req$body
-
-    meta    = body$meta
-    filters = body$filters
-    
-    check_common_missing_filters(filters)
-    
+  body = req$body
+  
+  meta    = body$meta
+  filters = body$filters
+  
+  check_common_missing_filters(filters)
+  
+  ST01A_data = ST01A.filter_data(FC, FC_f,
+                                 reporting_flag = filters$reporting_flag,
+                                 year_from      = filters$year_from,
+                                 year_to        = filters$year_to)
+  
+  ST01B_data = ST01B.filter_data(FCG, FCG_f,
+                                 reporting_flag = filters$reporting_flag,
+                                 year_from      = filters$year_from,
+                                 year_to        = filters$year_to)  
+  
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST01A_data", "ST01B_data"), {
+        
     filename = paste0("ST01-T1FC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
 
-    iccat.dev.data::ST01.export(FC, FC_f, FCG, FCG_f,
+    iccat.dev.data::ST01.export(ST01A_data, ST01B_data,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported = meta$version_reported,
                                 content_type     = meta$content_type,
@@ -114,18 +125,24 @@ function(req, res, reporting_flag) {
 #* @parser json
 #* @post /ST02
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "NC", "check_common_missing_filters"), {
-    body = req$body
-    
-    meta    = body$meta
-    filters = body$filters
-    
-    check_common_missing_filters(filters)
+  body = req$body
+  
+  meta    = body$meta
+  filters = body$filters
+  
+  check_common_missing_filters(filters)
+  
+  ST02_data = ST02.filter_data(NC,
+                               reporting_flag = filters$reporting_flag,
+                               year_from      = filters$year_from,
+                               year_to        = filters$year_to)
+  
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST02_data"), {
     
     filename = paste0("ST02-T1BC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
     
-    iccat.dev.data::ST02.export(NC,
+    iccat.dev.data::ST02.export(ST02_data,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported = meta$version_reported,
                                 content_type     = meta$content_type,
@@ -170,25 +187,32 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST03
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "EF", "CA", "check_common_missing_filters", "missing_parameter"), {
-    body = req$body
-    
-    meta    = body$meta
-    filters = body$filters
-    
-    check_common_missing_filters(filters)
-    
-    if(!"data_source" %in% names(filters) | is.null(filters$data_source)) missing_parameter("The 'Data source' filter is mandatory")
-    
-    year_from = filters$year_from
-    year_to   = filters$year_to
-    
-    if(year_to != year_from) missing_parameter("Only a maximum of 1 year of catch-and-effort data can be exported at a time")
+  body = req$body
+  
+  meta    = body$meta
+  filters = body$filters
+  
+  check_common_missing_filters(filters)
+  
+  if(!"data_source" %in% names(filters) | is.null(filters$data_source)) missing_parameter("The 'Data source' filter is mandatory")
+  
+  year_from = filters$year_from
+  year_to   = filters$year_to
+  
+  if(year_to != year_from) missing_parameter("Only a maximum of 1 year of catch-and-effort data can be exported at a time")
+
+  ST03_data = ST03.filter_data_CE(EF, CA, 
+                                  reporting_flag = filters$reporting_flag,
+                                  year_from      = filters$year_from,
+                                  year_to        = filters$year_to,
+                                  data_source    = filters$data_source)
+  
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST03_data"), {
     
     filename = paste0("ST03-T2CE_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_", filters$data_source, ".xlsx")
     filepath = file.path(tempdir(), filename)
     
-    iccat.dev.data::ST03.export(EF, CA,
+    iccat.dev.data::ST03.export(ST03_data,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported = meta$version_reported,
                                 content_type     = meta$content_type,
@@ -242,21 +266,34 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST04
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "SZ", "check_common_missing_filters", "missing_parameter"), {
-    body = req$body
-    
-    meta    = body$meta
-    filters = body$filters
-    
-    check_common_missing_filters(filters)
-    
-    if(!"species" %in% names(filters)           | is.null(filters$species))           missing_parameter("The 'Species' filter is mandatory")
-    if(!"sampling_location" %in% names(filters) | is.null(filters$sampling_location)) missing_parameter("The 'Sampling location' filter is mandatory")
-    if(!"sampling_unit" %in% names(filters)     | is.null(filters$sampling_unit))     missing_parameter("The 'Sampling unit' filter is mandatory")
-    if(!"raised" %in% names(filters)            | is.null(filters$raised))            missing_parameter("The 'Raised' filter is mandatory")
-    if(!"frequency_type" %in% names(filters)    | is.null(filters$frequency_type))    missing_parameter("The 'Frequency type' filter is mandatory")
-    if(!"class_limit" %in% names(filters)       | is.null(filters$class_limit))       missing_parameter("The 'Class limit' filter is mandatory")
-    if(!"size_interval" %in% names(filters)     | is.null(filters$size_interval))     missing_parameter("The 'Size interval' filter is mandatory")
+  body = req$body
+  
+  meta    = body$meta
+  filters = body$filters
+  
+  check_common_missing_filters(filters)
+  
+  if(!"species" %in% names(filters)           | is.null(filters$species))           missing_parameter("The 'Species' filter is mandatory")
+  if(!"sampling_location" %in% names(filters) | is.null(filters$sampling_location)) missing_parameter("The 'Sampling location' filter is mandatory")
+  if(!"sampling_unit" %in% names(filters)     | is.null(filters$sampling_unit))     missing_parameter("The 'Sampling unit' filter is mandatory")
+  if(!"raised" %in% names(filters)            | is.null(filters$raised))            missing_parameter("The 'Raised' filter is mandatory")
+  if(!"frequency_type" %in% names(filters)    | is.null(filters$frequency_type))    missing_parameter("The 'Frequency type' filter is mandatory")
+  if(!"class_limit" %in% names(filters)       | is.null(filters$class_limit))       missing_parameter("The 'Class limit' filter is mandatory")
+  if(!"size_interval" %in% names(filters)     | is.null(filters$size_interval))     missing_parameter("The 'Size interval' filter is mandatory")
+  
+  ST04_data = ST04.filter_data(SZ,
+                               reporting_flag    = filters$reporting_flag,
+                               year_from         = filters$year_from,
+                               year_to           = filters$year_to,
+                               species           = filters$species,
+                               sampling_location = filters$sampling_location,
+                               sampling_unit     = filters$sampling_unit,
+                               raised            = filters$raised,
+                               frequency_type    = filters$frequency_type,
+                               class_limit       = filters$class_limit,
+                               size_interval     = filters$size_interval)
+  
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST04_data"), {
     
     filename = paste0("ST04-T2SZ_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_", #input$sz_product_type, "_",
@@ -266,7 +303,7 @@ function(req, res) {
                       filters$size_interval, ".xlsx")
     filepath = file.path(tempdir(), filename)
     
-    iccat.dev.data::ST04.export(SZ,
+    iccat.dev.data::ST04.export(ST04_data,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported  = meta$version_reported,
                                 content_type      = meta$content_type,
@@ -326,18 +363,28 @@ function(req, res, reporting_flag) {
 #* @serializer contentType list(type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 #* @post /ST05
 function(req, res) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "CS", "check_common_missing_filters", "missing_parameter"), {
-    body = req$body
-    
-    meta    = body$meta
-    filters = body$filters
-    
-    check_common_missing_filters(filters)
-    
-    if(!"species" %in% names(filters)        |is.null(filters$species))        missing_parameter("The 'Species' filter is mandatory")
-    if(!"frequency_type" %in% names(filters) |is.null(filters$frequency_type)) missing_parameter("The 'Frequency type' filter is mandatory")
-    if(!"class_limit" %in% names(filters)    |is.null(filters$class_limit))    missing_parameter("The 'Class limit' filter is mandatory")
-    if(!"size_interval" %in% names(filters)  |is.null(filters$size_interval))  missing_parameter("The 'Size interval' filter is mandatory")
+  body = req$body
+  
+  meta    = body$meta
+  filters = body$filters
+  
+  check_common_missing_filters(filters)
+  
+  if(!"species" %in% names(filters)        |is.null(filters$species))        missing_parameter("The 'Species' filter is mandatory")
+  if(!"frequency_type" %in% names(filters) |is.null(filters$frequency_type)) missing_parameter("The 'Frequency type' filter is mandatory")
+  if(!"class_limit" %in% names(filters)    |is.null(filters$class_limit))    missing_parameter("The 'Class limit' filter is mandatory")
+  if(!"size_interval" %in% names(filters)  |is.null(filters$size_interval))  missing_parameter("The 'Size interval' filter is mandatory")
+  
+  ST05_data = ST05.filter_data(CS,
+                               reporting_flag    = filters$reporting_flag,
+                               year_from         = filters$year_from,
+                               year_to           = filters$year_to,
+                               species           = filters$species,
+                               frequency_type    = filters$frequency_type,
+                               class_limit       = filters$class_limit,
+                               size_interval     = filters$size_interval)
+  
+  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST05_data"), {
     
     filename = paste0("ST05-T2CS_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_",  filters$frequency_type, "_", filters$class_limit, "_",
@@ -345,7 +392,7 @@ function(req, res) {
     
     filepath = file.path(tempdir(), filename)
     
-    iccat.dev.data::ST05.export(CS,
+    iccat.dev.data::ST05.export(ST05_data,
                                 statistical_correspondent = meta$statistical_correspondent,
                                 version_reported = meta$version_reported,
                                 content_type     = meta$content_type,
