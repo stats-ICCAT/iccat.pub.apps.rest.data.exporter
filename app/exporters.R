@@ -77,7 +77,7 @@ function(req, res) {
                                  year_from      = filters$year_from,
                                  year_to        = filters$year_to)  
   
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST01A_data", "ST01B_data"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST01A_data", "ST01B_data"), {
         
     filename = paste0("ST01-T1FC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -114,7 +114,7 @@ function(req, res) {
 #* @parser json
 #* @get /ST01/<reporting_flag>
 function(req, res, reporting_flag) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "FC", "reporting_flag"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "FC", "reporting_flag"), {
      return(
        FC[FlagCode == reporting_flag, .(NUM_RECORDS = .N), keyby = .(REPORTING_FLAG = FlagCode, YEAR = YearC)][order(YEAR)]
      )                      
@@ -137,7 +137,7 @@ function(req, res) {
                                year_from      = filters$year_from,
                                year_to        = filters$year_to)
   
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST02_data"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST02_data"), {
     
     filename = paste0("ST02-T1BC_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -175,7 +175,7 @@ function(req, res) {
 #* @parser json
 #* @get /ST02/<reporting_flag>
 function(req, res, reporting_flag) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "NC", "reporting_flag"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "NC", "reporting_flag"), {
     return(
       NC[Year >= 1950 & FlagCode == reporting_flag, 
           .(NUM_RECORDS = .N, TOTAL_CATCHES_T = round(sum(CatchKg, na.rm = TRUE) / 1000.0, 2)), 
@@ -207,7 +207,7 @@ function(req, res) {
                                   year_to        = filters$year_to,
                                   data_source    = filters$data_source)
   
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST03_data"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST03_data"), {
     
     filename = paste0("ST03-T2CE_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_", filters$data_source, ".xlsx")
     filepath = file.path(tempdir(), filename)
@@ -246,7 +246,7 @@ function(req, res) {
 #* @parser json
 #* @get /ST03/<reporting_flag>
 function(req, res, reporting_flag) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "EF", "CA", "reporting_flag"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "EF", "CA", "reporting_flag"), {
     efforts  = EF[FlagCode == reporting_flag]
     catches = CA[FlagCode == reporting_flag]
     
@@ -293,7 +293,7 @@ function(req, res) {
                                class_limit       = filters$class_limit,
                                size_interval     = filters$size_interval)
   
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST04_data"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST04_data"), {
     
     filename = paste0("ST04-T2SZ_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_", #input$sz_product_type, "_",
@@ -344,7 +344,7 @@ function(req, res) {
 #* @parser json
 #* @get /ST04/<reporting_flag>
 function(req, res, reporting_flag) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "SZ", "reporting_flag"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "SZ", "reporting_flag"), {
     return(
       SZ[Year >= 1950 & FlagCode == reporting_flag, 
          .(NUM_SAMPLES = sum(Nr, na.rm = TRUE)), 
@@ -384,7 +384,7 @@ function(req, res) {
                                class_limit       = filters$class_limit,
                                size_interval     = filters$size_interval)
   
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST05_data"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang", "plumber"), globals = c("req", "res", "meta", "filters", "ST05_data"), {
     
     filename = paste0("ST05-T2CS_", filters$reporting_flag, "_", filters$year_from, "-", filters$year_to, "_",
                       filters$species, "_",  filters$frequency_type, "_", filters$class_limit, "_",
@@ -430,7 +430,7 @@ function(req, res) {
 #* @parser json
 #* @get /ST05/<reporting_flag>
 function(req, res, reporting_flag) {
-  promises::future_promise(packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "CS", "reporting_flag"), {
+  promises::future_promise(seed = NULL, packages = c("iccat.dev.data", "iccat.pub.data", "rlang"), globals = c("req", "res", "CS", "reporting_flag"), {
     return(
       CS[Year >= 1950 & FlagCode == reporting_flag, 
          .(NUM_FISH = sum(Nr, na.rm = TRUE)),
