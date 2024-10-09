@@ -28,11 +28,11 @@ COPY ./app .
 copy ./update_libs.R .
 
 # External argument(s)
-ARG GITLAB_AUTH_TOKEN
+ARG GITHUB_AUTH_TOKEN
 
 # Environment variables
 #ENV _R_SHLIB_STRIP_=true
-ENV GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN
+ENV GITHUB_AUTH_TOKEN=$GITHUB_AUTH_TOKEN
 
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 RUN Rscript ./update_libs.R
