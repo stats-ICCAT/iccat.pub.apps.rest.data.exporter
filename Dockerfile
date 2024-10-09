@@ -25,7 +25,7 @@ WORKDIR /home/exporter
 
 # Copies the app sources 
 COPY ./app .
-copy ./update_libs.R .
+COPY ./update_libs.R .
 
 # External argument(s)
 ARG GITHUB_AUTH_TOKEN
